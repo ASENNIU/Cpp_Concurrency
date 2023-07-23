@@ -63,7 +63,7 @@ public:
         {
             std::unique_lock<std::mutex> next_lk(next->m);
             lk.unlock();
-            if (p(*next->data))
+            if (P(*next->data))
             {
                 return next->data;
             }
@@ -74,14 +74,14 @@ public:
     }
 
     template<typename Predicate>
-    void remove_if(Predicate p)
+    void remove_if(Predicate P)
     {
         node* current = &head;
         std::unique_lock<std::mutex> lk(head.m);
         while (node* const next = current->next.get())
         {
             std::unique_lock<std::mutex> next_lk(next->m);
-            if (p(*next->data))
+            if (P(*next->data))
             {
                 std::unique_ptr<node> old_next = std::move(current->next);
                 current->next = std::move(next->next);

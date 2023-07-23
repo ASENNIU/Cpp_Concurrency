@@ -12,6 +12,8 @@
 #include <utility>
 #include <list>
 #include <vector>
+#include <map>
+#include <algorithm>
 
 template<typename Key, typename Value, typename Hash=std::hash<Key>>
 class threadsafe_lookup_table
@@ -24,7 +26,9 @@ private:
         typedef std::list<bucket_value> bucket_data;
         // 这里的 typename 让编译器知道 iterator 是一种类型，而不是 bucket_data 的静态成员。
         typedef typename bucket_data::iterator bucket_iterator;
-        bucket_data data;
+
+        // find_entry_for这个函数不知道在哪个地方会修改data，所以这里要声明为mutable（因为find_entry_for是const的）
+        mutable bucket_data data;
         mutable std::shared_mutex mutex;
 
         bucket_iterator find_entry_for(Key const& key) const
@@ -117,7 +121,7 @@ public:
         std::map<Key, Value> res;
         for (unsigned i = 0; i < buckets.size(); ++i)
         {
-            for (bucket_iterator it = buckets[i].data.begin(); it != buckets[i].data.end(); ++it)
+            for (typename std::list<std::pair<Key, Value>>::iterator it = buckets[i].data.begin(); it != buckets[i].data.end(); ++it)
             {
                 res.insert(*it);
             }
