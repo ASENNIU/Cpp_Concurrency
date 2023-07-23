@@ -8,8 +8,10 @@
 
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <utility>
 #include <list>
+#include <vector>
 
 template<typename Key, typename Value, typename Hash=std::hash<Key>>
 class threadsafe_lookup_table
@@ -77,6 +79,7 @@ public:
     typedef Key key_type;
     typedef Value mapped_type;
     typedef Hash hash_type;
+
     threadsafe_lookup_table(unsigned num_buckets=19, Hash const& hasher_=Hash()) :
         buckets(num_buckets), hasher(hasher_)
     {
@@ -85,20 +88,25 @@ public:
             buckets[i].reset(new bucket_type);
         }
     }
+
     threadsafe_lookup_table(threadsafe_lookup_table const&)=default;
     threadsafe_lookup_table& operator=(threadsafe_lookup_table const&)=delete;
+
     Value value_for(Key const& key, Value const& default_value=Value()) const
     {
         return get_bucket(key).value_for(key, default_value);
     }
+
     void add_or_update_mapping(Key const& key, Value const& value)
     {
         get_bucket(key).add_or_update_mapping(key, value);
     }
+
     void remove_mapping(Key const& key)
     {
         get_bucket(key).remove_mapping(key);
     }
+
     std::map<Key, Value> get_map() const
     {
         std::vector<std::unique_lock<std::shared_mutex>> locks;
