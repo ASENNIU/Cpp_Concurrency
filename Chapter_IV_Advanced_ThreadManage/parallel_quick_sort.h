@@ -33,18 +33,18 @@ struct sorter
         result.splice(result.begin(), new_lower.get());
         return result;
     }
-
-    template<typename T>
-    std::list<T> parallel_quick_sort(std::list<T> input)
-    {
-        if (input.empty())
-        {
-            return input;
-        }
-        sorter<T> s;
-        return s.do_sort(input);
-    }
 };
+
+template<typename T>
+std::list<T> parallel_quick_sort(std::list<T> input)
+{
+    if (input.empty())
+    {
+        return input;
+    }
+    sorter<T> s;
+    return s.do_sort(input);
+}
 
 
 #endif //CPP_CONCURRENCY_PARALLEL_QUICK_SORT_H

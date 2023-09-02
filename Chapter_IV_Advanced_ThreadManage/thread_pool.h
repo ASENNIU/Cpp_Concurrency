@@ -123,7 +123,7 @@ class thread_pool
         }
     }
 public:
-    thread_pool_naive() : done(false), joiner(threads)
+    thread_pool() : done(false), joiner(threads)
     {
         unsigned  const thread_count = std::thread::hardware_concurrency();
         try
