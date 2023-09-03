@@ -5,7 +5,10 @@
 #ifndef CPP_CONCURRENCY_UTILS_H
 #define CPP_CONCURRENCY_UTILS_H
 
-class join_threads;
+#include <vector>
+#include <thread>
+
+class join_threads
 {
     std::vector<std::thread>& threads;
     public:
@@ -18,6 +21,6 @@ class join_threads;
                 threads[i].join();
         }
     }
-}
+};
 
 #endif //CPP_CONCURRENCY_UTILS_H

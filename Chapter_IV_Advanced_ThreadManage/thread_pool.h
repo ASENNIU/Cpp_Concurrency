@@ -7,6 +7,10 @@
 
 #include "threadsafe_queue_complex.h"
 #include "utils.h"
+#include <atomic>
+#include <vector>
+#include <thread>
+#include <future>
 
 class thread_pool_naive
 {
@@ -41,7 +45,7 @@ public:
         {
             for (unsigned i = 0; i < thread_count; ++i)
             {
-                threads.push_back(std::thread(&thread_pool::worker_thread, this));
+                threads.emplace_back(&thread_pool_naive::worker_thread, this);
             }
         }
         catch (...)
@@ -50,7 +54,7 @@ public:
             throw;
         }
     }
-    ~thread_pool()
+    ~thread_pool_naive()
     {
         done = true;
     }
